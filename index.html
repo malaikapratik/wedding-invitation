@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Full Screen Door Reveal</title>
+
+    <style>
+
+        :root {
+            --door-width: 300px;
+            --door-height: 600px;
+            --anim-speed: 1.5s;
+        }
+
+
+
+        @media (max-width: 600px) {
+            :root {
+                --door-width: 50vw;
+                --door-height: 80vh;
+            }
+
+        }
+
+
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("doorback.png");
+			/* Crucial: Shows the WHOLE image without cropping */
+			background-size: contain;
+            font-family: 'Segoe UI', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            /* Initially hidden to prevent scrolling before open */
+            overflow: hidden; 
+        }
+
+
+
+        /* Container for the 3D scene */
+
+        .perspective-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            perspective: 1200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+
+
+        .door-frame {
+            position: relative;
+            width: calc(var(--door-width) * 2);
+            height: var(--door-height);
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+
+
+        .door {
+            position: absolute;
+            width: var(--door-width);
+            height: var(--door-height);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            z-index: 2;
+            transition: transform var(--anim-speed) cubic-bezier(0.4, 0, 0.2, 1), opacity 5s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+
+
+        .left-door {
+            left: 0;
+            background-image: url('leftdoorhalf.png');
+            transform-origin: left;
+        }
+
+
+
+        .right-door {
+            right: 0;
+            background-image: url('rightdoorhalf.png');
+            transform-origin: right;
+        }
+
+        .card-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+			background-color:#fff5e9;
+            /*background: url("insidebackground.png") no-repeat center/cover;*/
+			background-size: contain;
+            z-index: 1;
+            opacity: 0;
+            visibility: hidden;
+            overflow-y: auto; /* Enable scrolling */
+            transition: opacity 1s ease-in-out;
+            box-sizing: border-box;
+        }
+
+
+        /* Content Styling */
+
+        .content-wrap {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            color: #333;
+        }
+
+
+		.main {
+		background-image: url("firstcard.png");
+		background-repeat: no-repeat;
+		background-size: contain; /* This removes the gaps by filling the area */
+		background-position: center;
+		width: 100%;
+		height: 100vh;
+		margin: 0; /* Ensures no default browser margins interfere */
+		}
+
+		
+
+		
+
+        .spacer { height: 100vh; background: #f9f9f9; margin-top: 50px; display: flex; align-items: center; justify-content: center; }
+
+
+
+        /* --- OPEN STATES --- */
+
+
+
+        /* Doors Swing */
+
+        .open .left-door { transform: rotateY(-140deg); opacity: 0; }
+
+        .open .right-door { transform: rotateY(140deg); opacity: 0; }
+
+
+
+        /* Frame Zooms In */
+
+        .open .door-frame { transform: scale(3); pointer-events: none; }
+
+
+
+        /* Reveal Webpage */
+
+        .reveal-page .card-page {
+
+            opacity: 1;
+
+            visibility: visible;
+
+        }
+
+
+
+        /* Allow Body Scroll once page is revealed */
+
+        body.scroll-ready {
+
+            overflow: auto;
+
+        }
+
+
+
+    </style>
+
+</head>
+
+<body>
+
+
+
+   <div class="perspective-container" id="doorsContainer">
+
+        <div class="door-frame" id="doorWrapper">
+
+            <div class="door left-door"></div>
+
+            <div class="door right-door"></div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="card-page" id="mainContent">
+
+        <div class="content-wrap">
+
+			<div class="main">
+
+						
+
+			</div>
+
+			<div class="second">
+			<img src="shlok.png" style="width: 100%;">
+					
+
+			</div>
+
+			 <div class="names-slide">
+
+				<img src="names.png" style="width: 100%; padding-top:5%; padding-bottom:5%;">	
+
+			</div>
+			<div class="forth">
+				<img src="names.png" style="width: 100%;">	
+			</div>
+			
+            
+
+         
+        </div>
+
+    </div>
+
+
+
+    <script>
+
+        const wrapper = document.getElementById('doorWrapper');
+
+        const container = document.getElementById('doorsContainer');
+
+        const body = document.body;
+
+
+
+        wrapper.addEventListener('click', () => {
+
+            // 1. Start the door animation
+
+            wrapper.classList.add('open');
+
+            
+
+            // 2. Reveal the webpage underneath
+
+            body.classList.add('reveal-page');
+
+
+
+            // 3. After doors finish swinging and fading (1.5s), 
+
+            //    remove the door container and enable scrolling.
+
+            setTimeout(() => {
+
+                container.style.display = 'none';
+
+                body.classList.add('scroll-ready');
+
+            }, 1500); 
+
+        });
+
+    </script>
+
+
+
+</body>
+
+</html>
